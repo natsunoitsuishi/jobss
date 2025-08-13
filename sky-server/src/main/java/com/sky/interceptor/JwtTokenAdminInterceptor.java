@@ -34,7 +34,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
      */
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("Thread Id: " +  Thread.currentThread().getId());
+        System.out.println("Thread Id: " +  Thread.currentThread().getId() + "\nsbsbsbsbsbMethodsbsbsbsbsbMethod\n");
 
         //判断当前拦截到的是Controller的方法还是其他资源
         if (!(handler instanceof HandlerMethod)) {
