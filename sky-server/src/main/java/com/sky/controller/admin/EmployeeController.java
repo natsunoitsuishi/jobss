@@ -116,4 +116,30 @@ public class EmployeeController {
         employeeService.stopOrStart(status, id);
         return Result.success();
     }
+
+    /**
+     * getById
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "getById 员工")
+    @GetMapping("/{id}")
+    public Result<Employee> getById(@PathVariable("id") Long id) {
+        log.info("getById id: {}", id);
+        return Result.success(employeeService.getById(id));
+    }
+
+
+    /**
+     *
+     * @param employeeDTO
+     * @return
+     */
+    @ApiOperation(value = "editorUser 员工")
+    @PutMapping
+    public Result editorUser(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("editorUser");
+        employeeService.update (employeeDTO);
+        return Result.success();
+    }
 }

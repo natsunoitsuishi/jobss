@@ -19,6 +19,7 @@ public interface EmployeeMapper {
     Employee getByUsername(String username);
 
     /**
+     *
      * @param employee
      */
     @Insert("insert into employee (name, username, password, phone, sex, id_number, status, " +
@@ -32,4 +33,12 @@ public interface EmployeeMapper {
     Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 
     void update(Employee employee);
+
+    /**
+     * select By Id
+     * @param id
+     * @return
+     */
+    @Select("select * from employee where id = #{id}")
+    Employee getById(Long id);
 }
