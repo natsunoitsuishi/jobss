@@ -24,7 +24,7 @@ public class ShopController {
     @GetMapping("/status")
     @ApiOperation(value = "getShopStatus")
     public Result<Integer> getStatus () {
-        String status = (String) redisTemplate.opsForValue().get(KEY);
+        String status = String.valueOf(redisTemplate.opsForValue().get(KEY));
         log.info("setShopStatus {}", status.equals(ShopStatusConstant.SHOP_OPEN) ? "on" : "off");
         return Result.success(Integer.valueOf(status));
     }
