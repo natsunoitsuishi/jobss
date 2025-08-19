@@ -36,7 +36,7 @@ public class UserController {
     @PostMapping("/login")
     @ApiOperation(value = "wechat login")
     public Result<UserLoginVO> login (@RequestBody UserLoginDTO userLoginDTO) {
-        log.info("wechat login {}" , userLoginDTO.getCode());
+        log.info("wechat login {}", userLoginDTO.getCode());
 
         User user = userService.wxlogin(userLoginDTO);
 
