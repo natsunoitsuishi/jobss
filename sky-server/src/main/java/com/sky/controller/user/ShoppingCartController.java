@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Scanner;
 
 @RestController
 @RequestMapping("/user/shoppingCart")
@@ -36,5 +37,12 @@ public class ShoppingCartController {
     public Result<List<ShoppingCart>> list() {
         List<ShoppingCart> list = shoppingCartService.showShoppingCart();
         return Result.success(list);
+    }
+
+    @DeleteMapping("/clean")
+    @ApiOperation(value = "clean ShoppingCart")
+    public Result delete () {
+        shoppingCartService.cleanShoppingCart();
+        return Result.success();
     }
 }

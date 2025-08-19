@@ -34,7 +34,9 @@ public class CommonController {
     public Result<String> uploead (MultipartFile file) {
         log.info("upload Files {}, ...", file);
         try {
-            String filePath = aliOssUtil.upload(file.getBytes(), UUID.randomUUID().toString() +
+            String filePath = aliOssUtil.upload(
+                    file.getBytes(),
+                    UUID.randomUUID().toString() +
                     file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."))
             );
             return Result.success(filePath);
