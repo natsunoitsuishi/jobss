@@ -30,9 +30,7 @@ public class ShopController {
     @ApiOperation(value = "setShopStatus")
     public Result setStatus (@PathVariable Integer status){
         log.info("setShopStatus {}", status == Integer.valueOf(ShopStatusConstant.SHOP_OPEN) ? "on" : "off");
-
         redisTemplate.opsForValue().set(KEY, String.valueOf(status));
-
         return Result.success();
     }
 
@@ -40,6 +38,11 @@ public class ShopController {
     @ApiOperation(value = "getShopStatus")
     public Result<Integer> getStatus () {
         String status = (String) redisTemplate.opsForValue().get(KEY);
+
+        if (status == null) {
+            status = "1";
+        }
+
         log.info("setShopStatus {}", status.equals(ShopStatusConstant.SHOP_OPEN) ? "on" : "off");
         return Result.success(Integer.valueOf(status));
     }

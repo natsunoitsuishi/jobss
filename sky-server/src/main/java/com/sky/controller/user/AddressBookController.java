@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/user/addressBook")
@@ -56,8 +55,8 @@ public class AddressBookController {
     /**
      * 根据id修改地址
      *
-     * @param addressBook
-     * @return
+     * @param addressBook AddressBook
+     * @return Result
      */
     @PutMapping
     @ApiOperation("根据id修改地址")
@@ -91,7 +90,6 @@ public class AddressBookController {
         addressBookService.deleteById(id);
         return Result.success();
     }
-
 
     /**
      * 查询默认地址
