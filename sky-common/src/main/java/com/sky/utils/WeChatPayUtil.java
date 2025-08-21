@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
@@ -79,7 +80,11 @@ public class WeChatPayUtil {
      * @param body
      * @return
      */
-    private String post(String url, String body) throws Exception {
+    private String post(
+            String url,
+            String body
+    )
+            throws Exception {
         CloseableHttpClient httpClient = getClient();
 
         HttpPost httpPost = new HttpPost(url);
@@ -88,10 +93,10 @@ public class WeChatPayUtil {
         httpPost.addHeader("Wechatpay-Serial", weChatProperties.getMchSerialNo());
         httpPost.setEntity(new StringEntity(body, "UTF-8"));
 
+        assert httpClient != null;
         CloseableHttpResponse response = httpClient.execute(httpPost);
         try {
-            String bodyAsString = EntityUtils.toString(response.getEntity());
-            return bodyAsString;
+            return EntityUtils.toString(response.getEntity());
         } finally {
             httpClient.close();
             response.close();
@@ -131,7 +136,13 @@ public class WeChatPayUtil {
      * @param openid      微信用户的openid
      * @return
      */
-    private String jsapi(String orderNum, BigDecimal total, String description, String openid) throws Exception {
+    private String jsapi(
+            String      orderNum,
+            BigDecimal  total,
+            String      description,
+            String      openid
+    )
+            throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("appid", weChatProperties.getAppid());
         jsonObject.put("mchid", weChatProperties.getMchid());
@@ -140,7 +151,11 @@ public class WeChatPayUtil {
         jsonObject.put("notify_url", weChatProperties.getNotifyUrl());
 
         JSONObject amount = new JSONObject();
-        amount.put("total", total.multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());
+        amount.put("total", total.multiply(
+                new BigDecimal(100))
+                .setScale(2, BigDecimal.ROUND_HALF_UP)
+                .intValue()
+        );
         amount.put("currency", "CNY");
 
         jsonObject.put("amount", amount);
@@ -163,7 +178,13 @@ public class WeChatPayUtil {
      * @param openid      微信用户的openid
      * @return
      */
-    public JSONObject pay(String orderNum, BigDecimal total, String description, String openid) throws Exception {
+    public JSONObject pay(
+            String      orderNum,
+            BigDecimal  total,
+            String      description,
+            String      openid
+    )
+            throws Exception {
         //统一下单，生成预支付交易单
         String bodyAsString = jsapi(orderNum, total, description, openid);
         //解析返回结果
@@ -188,7 +209,9 @@ public class WeChatPayUtil {
             byte[] message = signMessage.getBytes();
 
             Signature signature = Signature.getInstance("SHA256withRSA");
-            signature.initSign(PemUtil.loadPrivateKey(new FileInputStream(new File(weChatProperties.getPrivateKeyFilePath()))));
+            signature.initSign(PemUtil.loadPrivateKey(
+                    Files.newInputStream(new File(weChatProperties.getPrivateKeyFilePath()).toPath()))
+            );
             signature.update(message);
             String packageSign = Base64.getEncoder().encodeToString(signature.sign());
 

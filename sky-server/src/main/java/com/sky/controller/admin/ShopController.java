@@ -4,15 +4,10 @@ import com.sky.constant.ShopStatusConstant;
 import com.sky.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.quartz.QuartzTransactionManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spi.schema.EnumTypeDeterminer;
-
-import java.util.concurrent.TimeUnit;
 
 @RestController("adminShopController")
 @RequestMapping("/admin/shop")
