@@ -21,7 +21,7 @@ public class OrderTask {
 //    @Scheduled(cron = "1/5 * * * * ?")
     @Scheduled(cron = "0 * * * * ?")
     public void processTimeoutOrder() {
-        log.info("TimeoutOrder ====> {}", LocalDateTime.now());
+        log.info("TimeoutOrder ====> {}", LocalDateTime.now().toString());
 
         List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(
                 Orders.PENDING_PAYMENT,
@@ -41,7 +41,7 @@ public class OrderTask {
 //    @Scheduled(cron = "0/5 * * * * ?")
     @Scheduled(cron = "0 0 1 * * ?")
     public void processDeliveryOrder() {
-        log.info("DeliveryOrder ====> {}", LocalDateTime.now());
+        log.info("DeliveryOrder ====> {}", LocalDateTime.now().toString());
 
         List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(
                 Orders.DELIVERY_IN_PROGRESS,

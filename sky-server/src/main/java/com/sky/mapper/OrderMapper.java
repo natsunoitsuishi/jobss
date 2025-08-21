@@ -1,24 +1,39 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
+import com.sky.dto.GoodsSalesDTO;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
-import com.sky.vo.OrderPaymentVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
 
+    /**
+     * 插入订单数据
+     * @param orders
+     */
     void insert(Orders orders);
 
     /**
-     * 根据订单号查询订单
+     * 根据订单号和用户id查询订单
      * @param orderNumber
+     * @param userId
      */
-    @Select("select * from orders where number = #{orderNumber}")
-    Orders getByNumber(String orderNumber);
+    @Select(
+            """
+            select * 
+            from orders
+            where 
+                    number  = #{orderNumber} 
+            and     user_id = #{userId}
+            """
+    )
+    Orders getByNumberAndUserId(String orderNumber, Long userId);
 
     /**
      * 修改订单信息
@@ -26,6 +41,90 @@ public interface OrderMapper {
      */
     void update(Orders orders);
 
-    @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
+    /**
+     * 分页条件查询并按下单时间排序
+     * @param ordersPageQueryDTO
+     */
+    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * 根据id查询订单
+     * @param id
+     */
+    @Select("select * from orders where id=#{id}")
+    Orders getById(Long id);
+
+    /**
+     * 根据状态统计订单数量
+     * @param status
+     */
+    @Select("select count(id) from orders where status = #{status}")
+    Integer countStatus(Integer status);
+
+    /**
+     * 根据订单状态和下单时间查询订单
+     * @param status
+     * @param orderTime
+     * @return
+     */
+    @Select(
+            """
+                select * 
+                from 
+                    orders 
+                where status = #{status} 
+                  and order_time < #{orderTime}
+            """
+    )
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
+
+    /**
+     * 根据动态条件统计营业额数据
+     * @param map
+     * @return Double
+     */
+    Double sumByMap(Map map);
+
+    /**
+     * 根据动态条件统计订单数量
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
+
+    /**
+     * 统计指定时间区间内的销量排名前10
+     * @param begin
+     * @param end
+     * @return
+     */
+    List<GoodsSalesDTO> getSalesTop10(LocalDateTime begin,LocalDateTime end);
+
+
+    @Select(
+            """
+            WITH RECURSIVE date_series AS (
+                SELECT CAST(#{beginTime} AS DATE) as date_val
+                UNION ALL
+                SELECT DATE_ADD(date_val, INTERVAL 1 day)
+                from date_series
+                where date_val < CAST(#{endTime} AS DATE)
+            )
+            select
+          
+            COALESCE(SUM(amount), 0.0)
+            
+            from        date_series ds
+            left join   orders o ON DATE(o.order_time) = ds.date_val
+
+                and     o.status      = #{completed}
+                and     o.order_time >= #{beginTime}
+                and     o.order_time <= #{endTime}
+
+            GROUP BY ds.date_val
+            ORDER BY ds.date_val
+
+            """
+    )
+    List<Double> getsumDailyRevenue(LocalDateTime beginTime, LocalDateTime endTime, Integer completed);
 }
