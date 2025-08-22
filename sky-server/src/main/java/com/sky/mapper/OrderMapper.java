@@ -127,4 +127,5 @@ public interface OrderMapper {
             """
     )
     List<Double> getsumDailyRevenue(LocalDateTime beginTime, LocalDateTime endTime, Integer completed);
+
 }
